@@ -20,15 +20,21 @@ class MyApp extends StatelessWidget {
       home:Scaffold(
       appBar: AppBar(
         
-        toolbarHeight: 60,
+        titleTextStyle:TextStyle(
+            fontFamily:'Inika',
+            fontSize: 27.0,
+        ),
+        centerTitle: true,
+        toolbarHeight: 80,
         elevation: 0,
         backgroundColor:Color(0xFF52524F) ,
-        title: Center(
-          child: Text('Music Player',style: TextStyle(
-            fontFamily: 'Inika-Bold',
-            fontSize: 23.0
-          ),),
-        ),
+        title: Text('Music Player'),
+        actions: [
+          IconButton(
+            onPressed: (){
+
+          }, icon: Icon(Icons.menu_outlined))
+        ],
       ),                
       )
     );
