@@ -15,53 +15,21 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme:ThemeData().copyWith(
         primaryColor: Color(0xFF52524F),
-        scaffoldBackgroundColor:  Color(0xFF52524F)
+        scaffoldBackgroundColor:  Color(0xFF52524F),
       ),
       home:Scaffold(
-        body: Container(
-          width: double.infinity,
-          margin: EdgeInsets.only(top: 12.0),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    width: 145.0,
-                  ),
-                    Text(
-                              'Music Player',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 28.0,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: 'Inika'
-                              ),
-                              
-                  ),
-                  SizedBox(
-                    width: 130.0,
-                  ),
-                  InkWell(
-                    onTap: () {
-
-                    },
-                    child: Icon(
-                      Icons.menu_sharp,
-                    
-                      color: Colors.white,
-                      size: 30.0,
-                    
-                    ),
-                  )
-                ],
-              ),
-            ],
-          )
+      appBar: AppBar(
+        
+        toolbarHeight: 60,
+        elevation: 0,
+        backgroundColor:Color(0xFF52524F) ,
+        title: Center(
+          child: Text('Music Player',style: TextStyle(
+            fontFamily: 'Inika-Bold',
+            fontSize: 23.0
+          ),),
         ),
-                      
-                  
-          
+      ),                
       )
     );
   }
