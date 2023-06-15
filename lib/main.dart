@@ -1,7 +1,7 @@
-import 'dart:html';
 
 import 'package:flutter/material.dart';
-
+import 'package:audioplayers/audioplayers.dart';
+import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 
 
 void main() {
@@ -26,10 +26,41 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class Musicdesign extends StatelessWidget {
-   Musicdesign({super.key});
+class Musicdesign extends StatefulWidget {
+  
+  @override
+  State<Musicdesign> createState() => _MusicdesignState();
+}
 
- AudioElement player=AudioElement();
+class _MusicdesignState extends State<Musicdesign> {
+bool playing=false;
+bool favorite=false;
+bool voiceup=true;
+
+AudioPlayer player=AudioPlayer();
+
+AudioCache cache=AudioCache();
+
+Duration position=Duration();
+
+Duration musicLength=Duration();
+
+Widget slider(){
+  return Slider.adaptive(
+    activeColor: Colors.grey,
+    inactiveColor:Colors.white ,
+    max: musicLength.inSeconds.toDouble(),
+    value: position.inSeconds.toDouble(), 
+    onChanged: (value){
+      seek(value.toInt());
+  });
+}
+
+void seek(int value){
+  Duration newPosition=Duration(seconds: value);
+  player.seek(newPosition);
+}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,7 +93,7 @@ class Musicdesign extends StatelessWidget {
                  showDragHandle: true,
                  backgroundColor: Color(0xFF52524F)
                  );
-          }, icon: Icon(Icons.menu_outlined)
+          }, icon: Icon(EvaIcons.menu)
           ,)
         ],
       ),       
@@ -123,8 +154,43 @@ class Musicdesign extends StatelessWidget {
               fontSize: 16.0
             ),
             ),
+          SizedBox(
+            height: 30.0,
+          ),
+          Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  IconButton(onPressed: (){
+                    setState(() {
+                      voiceup=!voiceup;
+                    });
+                  },
+                    icon: Icon(voiceup?EvaIcons.volumeUp:EvaIcons.volumeOff),
+                    color: Colors.white,
+                  ),
+                  IconButton(onPressed: (){
+                    setState(() {
+                      favorite=!favorite;
+                    });
+                  },
+                    icon: Icon(favorite?EvaIcons.heart:EvaIcons.heartOutline),
+                    color: Colors.white,
+                   ),
+                   IconButton(onPressed: (){
 
-
+                  },
+                    icon: Icon(EvaIcons.repeat),
+                    color: Colors.white,
+                    )
+                ],
+              ),
+              Container(
+                width: 350.0,
+                child:slider() ,
+              )
+                
+              
+              
         ],
       ),         
       );
