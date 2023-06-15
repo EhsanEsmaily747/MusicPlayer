@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:flutter/material.dart';
 
 
@@ -25,8 +27,9 @@ class MyApp extends StatelessWidget {
 }
 
 class Musicdesign extends StatelessWidget {
-  const Musicdesign({super.key});
+   Musicdesign({super.key});
 
+ AudioElement player=AudioElement();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
