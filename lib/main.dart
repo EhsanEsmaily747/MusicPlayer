@@ -37,30 +37,40 @@ bool playing=false;
 bool favorite=false;
 bool voiceup=true;
 
-AudioPlayer player=AudioPlayer();
-
-AudioCache cache=AudioCache();
-
-Duration position=Duration();
-
-Duration musicLength=Duration();
-
+double num=0;
 Widget slider(){
-  return Slider.adaptive(
-    activeColor: Colors.grey,
-    inactiveColor:Colors.white ,
-    max: musicLength.inSeconds.toDouble(),
-    value: position.inSeconds.toDouble(), 
-    onChanged: (value){
-      seek(value.toInt());
-  });
+  return SliderTheme(
+    data: SliderTheme.of(context).copyWith(
+      trackHeight:3.0,
+      thumbShape: RoundSliderThumbShape(
+        enabledThumbRadius: 13.0,
+        elevation: 10.0,
+        pressedElevation: 22.0
+      ),
+      
+      overlayColor: Colors.white
+
+    )
+    
+    
+    ,child: Slider(
+      activeColor: Colors.grey,
+      inactiveColor:Colors.white , 
+      value: num,
+      thumbColor: Colors.white,
+      divisions: 100,
+      onChanged: (value){
+        setState(() {
+          num=value;
+        });
+    }),
+  );
 }
 
 void seek(int value){
-  Duration newPosition=Duration(seconds: value);
-  player.seek(newPosition);
-}
 
+}
+final textColor= Color(0xFFD9D9D9);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,7 +79,7 @@ void seek(int value){
         
         titleTextStyle:TextStyle(
             fontFamily:'Inika',
-            fontSize: 27.0,
+            fontSize: 28.0,
             fontWeight: FontWeight.bold
         ),
         centerTitle: true,
@@ -79,6 +89,7 @@ void seek(int value){
         title: Text('Music Player'),
         actions: [
           IconButton(
+            splashRadius: 1.0,
             onPressed: (){
               showModalBottomSheet(
                 context: context,
@@ -93,18 +104,19 @@ void seek(int value){
                  showDragHandle: true,
                  backgroundColor: Color(0xFF52524F)
                  );
-          }, icon: Icon(EvaIcons.menu)
+          }, icon: Icon(EvaIcons.list)
           ,)
         ],
       ),       
       body: Column(
+
         children: [
           SizedBox(
             height: 50.0,
           ),
           
           Text('Listen To Your Favorite Song Here',style: TextStyle(
-            color: Color(0xFFD9D9D9),
+            color: textColor,
             fontSize: 16.0,
             // fontStyle: FontStyle.italic,
             fontFamily: 'Inika',
@@ -155,39 +167,101 @@ void seek(int value){
             ),
             ),
           SizedBox(
-            height: 30.0,
+            height: 20.0,
           ),
           Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  IconButton(onPressed: (){
+                  IconButton(
+                    splashRadius: 1.0,
+                    onPressed: (){
                     setState(() {
                       voiceup=!voiceup;
                     });
                   },
                     icon: Icon(voiceup?EvaIcons.volumeUp:EvaIcons.volumeOff),
-                    color: Colors.white,
+                    color: textColor,
                   ),
-                  IconButton(onPressed: (){
+                  IconButton(
+                    splashRadius: 1.0,
+                    onPressed: (){
                     setState(() {
                       favorite=!favorite;
                     });
                   },
                     icon: Icon(favorite?EvaIcons.heart:EvaIcons.heartOutline),
-                    color: Colors.white,
+                    color: textColor,
                    ),
-                   IconButton(onPressed: (){
+                   IconButton(
+                    splashRadius: 1.0,
+                    onPressed: (){
 
                   },
                     icon: Icon(EvaIcons.repeat),
-                    color: Colors.white,
+                    color: textColor,
                     )
                 ],
+              ),
+              // SizedBox(
+              //   height: 10.0,
+              // ),
+              Container(
+                width:310.0,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('00:00',style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 12.0
+                    ),
+                    ),
+                    Text('02:23',style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 12.0
+                    ))
+                  ],
+                ),
               ),
               Container(
                 width: 350.0,
                 child:slider() ,
-              )
+              ),
+              Container(
+                child: Row(
+                  mainAxisAlignment:MainAxisAlignment.center,
+                  children: [
+                    IconButton(
+                      splashRadius: 1.0,
+                      onPressed: (){
+                        
+                      },
+                      icon: Icon(Icons.fast_rewind_rounded),
+                      color: textColor,
+                      iconSize: 50.0,
+                    ),
+                    IconButton(
+                      splashRadius: 1.0,
+                      onPressed: (){
+                        setState(() {
+                          playing=!playing;
+                        });
+                      },
+                      icon: Icon(playing?Icons.pause:Icons.play_arrow_rounded),
+                      color:  textColor,
+                      iconSize: 60.0,
+                    ),
+                    IconButton(
+                      splashRadius: 1.0,
+                      onPressed: (){
+              
+                      },
+                      icon: Icon(Icons.fast_forward_rounded),
+                      color:  textColor,
+                      iconSize: 50.0,
+                    )
+                  ],
+                ),
+              ),
                 
               
               
