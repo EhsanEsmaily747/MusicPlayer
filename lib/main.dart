@@ -1,5 +1,6 @@
 
 
+
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
@@ -44,6 +45,8 @@ class _MusicdesignState extends State<Musicdesign> with SingleTickerProviderStat
   int currentse = 0;
   double iconSize=50.0;
 
+
+
   double num = 0;
   Widget slider() {
     return SliderTheme(
@@ -69,12 +72,7 @@ class _MusicdesignState extends State<Musicdesign> with SingleTickerProviderStat
   }
 
 
-// Get metadata from file
-// void getdata(AssetSource location)async{
 
-// Metadata metadata = await MetadataGod.readMetadata(file: '/assets');
-
-// }
 @override
 
   final player = AudioPlayer();
@@ -100,7 +98,6 @@ class _MusicdesignState extends State<Musicdesign> with SingleTickerProviderStat
       sec = (songLengthinSeconds % 60).toInt();
       print('$min:$sec');
     });
-    print(songLengthinSeconds);
 
     if (play) {
       player.play(AssetSource('dusk-to-dawn.mp3'));
@@ -183,6 +180,7 @@ class _MusicdesignState extends State<Musicdesign> with SingleTickerProviderStat
             AnimatedRotation(
               turns: playing?3.5:0,
               duration:playing?Duration(seconds: songLengthinSeconds):Duration(seconds: 0),
+              curve: Curves.bounceIn,
               child: Container(
                     width: 230.0,
                     height: 230.0,
@@ -229,6 +227,7 @@ class _MusicdesignState extends State<Musicdesign> with SingleTickerProviderStat
                   splashRadius: 1.0,
                   onPressed: () {
                     setState(() {
+                      player.setVolume(voiceup?0:1);
                       voiceup = !voiceup;
                     });
                   },
