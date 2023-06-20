@@ -1,6 +1,10 @@
+
+
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+// import 'package:metadata_god/metadata_god.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -28,7 +32,7 @@ class Musicdesign extends StatefulWidget {
   State<Musicdesign> createState() => _MusicdesignState();
 }
 
-class _MusicdesignState extends State<Musicdesign> {
+class _MusicdesignState extends State<Musicdesign> with SingleTickerProviderStateMixin{
   bool playing = false;
   bool favorite = false;
   bool voiceup = true;
@@ -38,6 +42,7 @@ class _MusicdesignState extends State<Musicdesign> {
   int currentpos = 0;
   int currentmin = 0;
   int currentse = 0;
+  double iconSize=50.0;
 
   double num = 0;
   Widget slider() {
@@ -63,10 +68,16 @@ class _MusicdesignState extends State<Musicdesign> {
     );
   }
 
-  void seek(int value) {}
+
+// Get metadata from file
+// void getdata(AssetSource location)async{
+
+// Metadata metadata = await MetadataGod.readMetadata(file: '/assets');
+
+// }
+@override
 
   final player = AudioPlayer();
-
   void playingSong(bool play) {
 //get the current position of playing audio
     player.onPositionChanged.listen((Duration p) {
@@ -169,25 +180,28 @@ class _MusicdesignState extends State<Musicdesign> {
             SizedBox(
               height: 30.0,
             ),
-            Center(
+            AnimatedRotation(
+              turns: playing?3.5:0,
+              duration:playing?Duration(seconds: songLengthinSeconds):Duration(seconds: 0),
               child: Container(
-                width: 230.0,
-                height: 230.0,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(140.0),
-                    image: DecorationImage(
-                        image: AssetImage('images/Dusk-Till-Dawn.jpg')),
-                    boxShadow: [
-                      BoxShadow(
-                        offset: Offset.fromDirection(7.8, 18.0),
-                        color: Color.fromARGB(255, 166, 166, 166),
-                        blurRadius: 50.0,
-                        spreadRadius: 2.0,
-                        blurStyle: BlurStyle.normal,
-                      )
-                    ]),
-              ),
+                    width: 230.0,
+                    height: 230.0,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(140.0),
+                        image: DecorationImage(
+                            image: AssetImage('images/Dusk-Till-Dawn.jpg')),
+                        boxShadow: [
+                          BoxShadow(
+                            offset: Offset.fromDirection(7.8, 18.0),
+                            color: Color.fromARGB(255, 166, 166, 166),
+                            blurRadius: 50.0,
+                            spreadRadius: 2.0,
+                            blurStyle: BlurStyle.normal,
+                          )
+                        ]),
+                ),
             ),
+            
             SizedBox(
               height: 40.0,
             ),
@@ -267,10 +281,12 @@ class _MusicdesignState extends State<Musicdesign> {
               children: [
                 IconButton(
                   splashRadius: 1.0,
-                  onPressed: () {},
+                  onPressed: () {
+                    
+                  },
                   icon: Icon(Icons.fast_rewind_rounded),
                   color: textColor,
-                  iconSize: 50.0,
+                  iconSize:iconSize,
                 ),
                 IconButton(
                   splashRadius: 1.0,
@@ -295,7 +311,7 @@ class _MusicdesignState extends State<Musicdesign> {
                   },
                   icon: Icon(Icons.fast_forward_rounded),
                   color: textColor,
-                  iconSize: 50.0,
+                  iconSize: iconSize,
                 )
               ],
             ),

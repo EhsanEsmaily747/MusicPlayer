@@ -37,6 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   audioplayers: ^4.1.0
   eva_icons_flutter: ^3.1.0
+  # metadata_god: ^0.4.1
 
 dev_dependencies:
   flutter_test:
