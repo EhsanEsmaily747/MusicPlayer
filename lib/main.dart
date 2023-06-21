@@ -1,9 +1,12 @@
 
 
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import 'listItemdesign.dart';
+import 'listItems.dart';
 // import 'package:metadata_god/metadata_god.dart';
 
 
@@ -44,43 +47,82 @@ class _MusicdesignState extends State<Musicdesign> with SingleTickerProviderStat
   int currentmin = 0;
   int currentse = 0;
   double iconSize=50.0;
+  listItems list=listItems();
+  String songName='';
+  String singer='';
+  int songNumber=0;
+  String image='';
+  String songSource='';
 
+  late final player;
+@override
+void initState() {
+  super.initState();
+  player=AudioPlayer();
+  fetchData(songNumber);
+}
 
+void fetchData(int number){
+  
+  songSource=list.items[number]['music'];
+  songName=list.items[number]['title'];
+  singer=list.items[number]['singer'];
+  image=list.items[number]['image'];
+
+  playingSong(playing);  
+}
 
   double num = 0;
   Widget slider() {
-    return SliderTheme(
-      data: SliderTheme.of(context).copyWith(
-          trackHeight: 3.0,
-          thumbShape: RoundSliderThumbShape(
-            enabledThumbRadius: 12.0,
-          ),
-          overlayColor: Colors.white),
-      child: Slider(
-          min: 0.0,
-          max: songLengthinSeconds.toDouble(),
-          activeColor: Colors.grey,
-          inactiveColor: Colors.white,
-          value: currentpos.toDouble(),
-          thumbColor: Colors.white,
-          onChanged: (value) {
-            setState(() {
-              player.seek(Duration(seconds: value.toInt()));
-            });
-          }),
-    );
+    return  SliderTheme(
+        data: SliderTheme.of(context).copyWith(
+            trackHeight: 3.0,
+            thumbShape: RoundSliderThumbShape(
+              enabledThumbRadius: 12.0,
+            ),
+            overlayColor: Colors.white
+            
+            ),
+        child: Slider(
+            min: 0.0,
+            max:songLengthinSeconds.toDouble(),
+            activeColor: Colors.grey,
+            inactiveColor: Colors.white,
+            value: currentpos.toDouble(),
+            thumbColor: Colors.white,
+            onChanged: (value) {
+              setState(() {
+                player.seek(Duration(seconds: value.toInt()));
+              });
+            }),
+      );
+    
   }
 
 
 
 @override
 
-  final player = AudioPlayer();
-  void playingSong(bool play) {
+  void playingSong(bool play){
+    if (play) {
+      player.play(AssetSource(songSource));
+    } else {
+      player.pause();
+    }
+
+
+//get the duration of audio
+     player.onDurationChanged.listen((Duration d) {
+      songLengthinSeconds = d.inSeconds;
+      min = (songLengthinSeconds / 60).toInt();
+      sec = (songLengthinSeconds % 60).toInt();
+      print(songLengthinSeconds);
+    });
+
 //get the current position of playing audio
     player.onPositionChanged.listen((Duration p) {
       setState(() {
-        currentpos = p.inSeconds;
+        currentpos = songLengthinSeconds>10? p.inSeconds:p.inSeconds+1;
         currentse = currentpos < 60 ? currentpos : currentpos % 60;
         currentmin = (currentpos / 60).toInt();
         if (currentpos == songLengthinSeconds) {
@@ -91,19 +133,6 @@ class _MusicdesignState extends State<Musicdesign> with SingleTickerProviderStat
         }
       });
     });
-//get the duration of audio
-    player.onDurationChanged.listen((Duration d) {
-      songLengthinSeconds = d.inSeconds;
-      min = (songLengthinSeconds / 60).toInt();
-      sec = (songLengthinSeconds % 60).toInt();
-      print('$min:$sec');
-    });
-
-    if (play) {
-      player.play(AssetSource('dusk-to-dawn.mp3'));
-    } else {
-      player.pause();
-    }
   }
 
   final textColor = Color(0xFFD9D9D9);
@@ -120,14 +149,14 @@ class _MusicdesignState extends State<Musicdesign> with SingleTickerProviderStat
         title: Text('Music Player'),
         actions: [
           IconButton(
-            splashRadius: 1.0,
+            splashRadius:0.1,
             onPressed: () {
               showModalBottomSheet(
                   context: context,
                   builder: (BuildContext context) {
                     return Container(
                       decoration: BoxDecoration(
-                        color: Color(0xFF52524F),
+                        color: Color.fromARGB(255, 114, 114, 114),
                         shape: BoxShape.rectangle,
                         borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(15.0),
@@ -137,14 +166,28 @@ class _MusicdesignState extends State<Musicdesign> with SingleTickerProviderStat
                         
                       ),
                       
-                      height: 400.0,
+                      height: 550.0,
                       child: Column(
                         children: [
                           Icon(
                             Icons.drag_handle,color: Colors.white.withOpacity(.6),
                             size: 30.0,
                             ),
-
+                            //song list here
+                            ...list.items.map((e) {
+                            // final index = list.items.indexOf(e);
+                            // final id = e['id'];
+                            final title = e['title'];
+                            // final image = e['image'];
+                            // final music = e['music'];
+                            return songlistItem(songName: title,songChoose:(){
+                              setState(() {
+                                songNumber=e['id']-1;
+                              });
+                              fetchData(songNumber);
+                              
+                            });
+                          })
                         ],
                       ),
                     );
@@ -178,19 +221,18 @@ class _MusicdesignState extends State<Musicdesign> with SingleTickerProviderStat
               height: 30.0,
             ),
             AnimatedRotation(
-              turns: playing?3.5:0,
-              duration:playing?Duration(seconds: songLengthinSeconds):Duration(seconds: 0),
-              curve: Curves.bounceIn,
+              turns: playing?10:0,
+              duration:playing?Duration(seconds: 250):Duration(seconds: 0),
               child: Container(
                     width: 230.0,
                     height: 230.0,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(140.0),
                         image: DecorationImage(
-                            image: AssetImage('images/Dusk-Till-Dawn.jpg')),
+                            image: AssetImage(image)),
                         boxShadow: [
                           BoxShadow(
-                            offset: Offset.fromDirection(7.8, 18.0),
+                            // offset: Offset.fromDirection(7.8, 18.0),
                             color: Color.fromARGB(255, 166, 166, 166),
                             blurRadius: 50.0,
                             spreadRadius: 2.0,
@@ -204,7 +246,7 @@ class _MusicdesignState extends State<Musicdesign> with SingleTickerProviderStat
               height: 40.0,
             ),
             Text(
-              'DUSK TILL DAWN',
+              songName,
               style: TextStyle(
                   color: Color(0xFFD9D9D9),
                   fontSize: 22.0,
@@ -214,7 +256,7 @@ class _MusicdesignState extends State<Musicdesign> with SingleTickerProviderStat
               height: 15.0,
             ),
             Text(
-              'ZAYN & SIA',
+              singer,
               style: TextStyle(color: Color(0xFFD9D9D9), fontSize: 16.0),
             ),
             SizedBox(
@@ -224,10 +266,10 @@ class _MusicdesignState extends State<Musicdesign> with SingleTickerProviderStat
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 IconButton(
-                  splashRadius: 1.0,
+                  splashRadius:0.1,
                   onPressed: () {
                     setState(() {
-                      player.setVolume(voiceup?0:1);
+                      player.setVolume(voiceup?0.0:1.0);
                       voiceup = !voiceup;
                     });
                   },
@@ -235,7 +277,7 @@ class _MusicdesignState extends State<Musicdesign> with SingleTickerProviderStat
                   color: textColor,
                 ),
                 IconButton(
-                  splashRadius: 1.0,
+                  splashRadius:0.1,
                   onPressed: () {
                     setState(() {
                       favorite = !favorite;
@@ -245,7 +287,7 @@ class _MusicdesignState extends State<Musicdesign> with SingleTickerProviderStat
                   color: textColor,
                 ),
                 IconButton(
-                  splashRadius: 1.0,
+                  splashRadius:0.1,
                   onPressed: () {},
                   icon: Icon(EvaIcons.repeat),
                   color: textColor,
@@ -266,7 +308,7 @@ class _MusicdesignState extends State<Musicdesign> with SingleTickerProviderStat
                     '0$currentmin:${currentse > 9 ? currentse : '0$currentse'}',
                     style: TextStyle(color: Colors.white, fontSize: 11.0),
                   ),
-                  Text('0$min:${sec < 9 ? '0$sec' : sec}',
+                  Text('0$min:${sec < 10 ? '0$sec' : sec}',
                       style: TextStyle(color: Colors.white, fontSize: 11.0))
                 ],
               ),
@@ -279,16 +321,22 @@ class _MusicdesignState extends State<Musicdesign> with SingleTickerProviderStat
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 IconButton(
-                  splashRadius: 1.0,
+                  splashRadius:0.1,
                   onPressed: () {
-                    
+                    setState(() {
+                      playing = false;
+                      currentpos = currentmin=currentse= 0;
+                      songNumber=songNumber==0?2:--songNumber;
+                    });
+                    fetchData(songNumber);
+                    player.stop();
                   },
                   icon: Icon(Icons.fast_rewind_rounded),
                   color: textColor,
                   iconSize:iconSize,
                 ),
                 IconButton(
-                  splashRadius: 1.0,
+                  splashRadius:0.1,
                   onPressed: () {
                     setState(() {
                       playing = !playing;
@@ -300,12 +348,14 @@ class _MusicdesignState extends State<Musicdesign> with SingleTickerProviderStat
                   iconSize: 60.0,
                 ),
                 IconButton(
-                  splashRadius: 1.0,
+                  splashRadius:0.1,
                   onPressed: () {
                     setState(() {
                       playing = false;
                       currentpos = currentmin=currentse= 0;
+                      songNumber=songNumber==2?0:++songNumber;
                     });
+                    fetchData(songNumber);
                     player.stop();
                   },
                   icon: Icon(Icons.fast_forward_rounded),
@@ -320,3 +370,5 @@ class _MusicdesignState extends State<Musicdesign> with SingleTickerProviderStat
     );
   }
 }
+
+
